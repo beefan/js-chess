@@ -15,16 +15,7 @@ const spaceListener = (space) => {
 
     if (pieceCanMove(space)) {
         stopListeningForMovement();
-
-        pieceName = selected.classList[1];
-        selected.classList.remove(pieceName);
-        selected.classList.remove('piece-select');
-        selected.classList.add('empty');
-
-        space.classList.remove('empty');
-        space.classList.add(pieceName);
-
-        selected = null;
+        move(space);
     }
 }
 
@@ -71,10 +62,21 @@ function pieceCanMove(space) {
     currentSpace = selected.id;
     spaceToMove = space.id;
 
-    alert(`Can ${pieceType} move from ${currentSpace} to ${spaceToMove}?`);
     //implement piece moving logic here
     return true;
 }
+
+function move(space) {
+    pieceName = selected.classList[1];
+    selected.classList.remove(pieceName);
+    selected.classList.remove('piece-select');
+    selected.classList.add('empty');
+
+    space.classList.remove('empty');
+    space.classList.add(pieceName);
+}
+
+selected = null;
 
 function listenForMovement() {
     const spaces = getAllSpaces();
@@ -92,6 +94,11 @@ function stopListeningForMovement() {
             x.classList.remove('space-select');
         }
     });
+}
+
+function opponentColor() {
+    if (turn === 'w') return 'b';
+    if (turn === 'b') return 'w';
 }
 
 function getAllSpaces() {
