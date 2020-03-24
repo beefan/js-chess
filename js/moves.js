@@ -8,7 +8,7 @@ function registerMoveListeners() {
 }
 
 const spaceListener = (space) => {
-    if (space.classList[1] != 'empty'){
+    if (getColor(space) == turn){
         pieceListener(space);
         return;
     }
@@ -20,22 +20,19 @@ const spaceListener = (space) => {
 }
 
 const pieceListener = (piece) => {
-    const pieceType = piece.classList[1];
-    if (pieceType == 'empty') {
-        spaceListener(piece);
-        return;
-    }
-    
     if (selected != null){
          selected.classList.remove('piece-select');
          selected = null;
          stopListeningForMovement();
       }
         
-     if (pieceType.substring(pieceType.length-1) === turn){
+     if (getColor(piece) === turn){
         selected = piece;
         piece.classList.add('piece-select');
         listenForMovement();
+        return;
+    } else {
+        spaceListener(piece);
         return;
     }
 }
@@ -57,8 +54,7 @@ function setListeners() {
 
 function pieceCanMove(space) {
     if (selected == null) return false;
-    pieceType = selected.classList[1];
-    pieceType = pieceType.substring(0, pieceType.length-2);
+    pieceType = getPieceType(selected);
     currentSpace = selected.id;
     spaceToMove = space.id;
 
@@ -68,11 +64,13 @@ function pieceCanMove(space) {
 
 function move(space) {
     pieceName = selected.classList[1];
+    targetClass = space.classList[1];
+
     selected.classList.remove(pieceName);
     selected.classList.remove('piece-select');
     selected.classList.add('empty');
 
-    space.classList.remove('empty');
+    space.classList.remove(targetClass);
     space.classList.add(pieceName);
 
     selected = null;
@@ -95,6 +93,17 @@ function stopListeningForMovement() {
             x.classList.remove('space-select');
         }
     });
+}
+
+function getPieceType(piece) {
+    pieceType = piece.classList[1];
+    pieceType = pieceType.substring(0, pieceType.length-2);
+}
+
+function getColor(piece) {
+    const pieceType = piece.classList[1];
+    const color = pieceType.substring(pieceType.length-1);
+    return color;
 }
 
 function opponentColor() {
