@@ -1,0 +1,152 @@
+html {
+    background-image: url('/img/wood-pattern.png');
+    background-repeat: repeat;
+    background-color: #d28900;
+    height: 100%;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*****
+CHESS BOARD
+******/
+
+#frame {
+    border: 5px groove black;
+    width: 600px;
+    height: 600px;
+    background-color: rgb(12, 223, 12);
+
+}
+
+#outerframe {
+    margin-top: 3%;
+    border: 20px solid rgb(110, 66, 7);
+    box-shadow: 20px 20px 50px #b67701, 
+    -20px -20px 50px #cf911c;
+}
+
+.row {
+    width: 100%;
+    height: 12.5%;
+    margin: 0px;
+}
+
+.white-square, .black-square {
+    width: 12.5%;
+    height: 100%;
+    display: inline-block;
+    margin: 0px;
+}
+
+.white-square:hover, .black-square:hover {
+    background-size: 100% 100%;
+}
+
+.white-square {
+    background-color: rgb(249, 237, 252);
+}
+
+.black-square {
+    background-color: #3f3c3c;
+}
+
+.piece-select {
+    box-shadow: 6px 6px 10px rgb(12, 223, 12) inset,
+    -6px -6px 10px rgb(12, 223, 12) inset;
+}
+
+.space-select:hover {
+    opacity: 80%;
+}
+
+/*****
+CHESS PIECES
+*******/
+.queen_b {
+    background-image: url("/img/queen_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.king_b {
+    background-image: url("/img/king_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.rook_b {
+    background-image: url("/img/rook_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.bishop_b {
+    background-image: url("/img/bishop_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.knight_b {
+    background-image: url("/img/knight_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pawn_b {
+    background-image: url("/img/pawn_b.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.queen_w {
+    background-image: url("/img/queen_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.king_w {
+    background-image: url("/img/king_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.rook_w {
+    background-image: url("/img/rook_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.bishop_w {
+    background-image: url("/img/bishop_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.knight_w {
+    background-image: url("/img/knight_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.pawn_w {
+    background-image: url("/img/pawn_w.png");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
