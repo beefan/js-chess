@@ -74,9 +74,10 @@ function move(space) {
 
     space.classList.remove('empty');
     space.classList.add(pieceName);
-}
 
-selected = null;
+    selected = null;
+    turn = opponentColor();
+}
 
 function listenForMovement() {
     const spaces = getAllSpaces();
