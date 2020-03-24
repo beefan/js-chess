@@ -1,3 +1,9 @@
+function clearBoard() {
+    const frame = document.getElementById('frame');
+    const rows = Array.from(frame.children);
+    rows.forEach( x => frame.removeChild(x));
+}
+
 function drawBoard() {
     const frame = document.getElementById('frame');
     for (let i = 0; i < 8 ; i++) {
