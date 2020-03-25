@@ -139,7 +139,15 @@ function canQueenMove(from, to) {
 }
 
 function canKingMove(from, to){
-    return true;
+    let validMoves = [];
+    validMoves.push(from - 1);
+    validMoves.push(from + 1);
+    for (let i=7; i < 10; i++){
+        validMoves.push(from + i);
+        validMoves.push(from - i);
+    }
+    
+    return (validMoves.includes(to) || canCastle(from, to)) && !inYourOwnWay(to);
 }
 
 /*HELPER FUNCTIONS */
@@ -157,4 +165,30 @@ function inYourOwnWay(elemId) {
 
 function isEdge(elemId) {
     return (elemId > 64 || elemId < 1 || elemId % 8 == 0 || (elemId-1) % 8 == 0);
+}
+
+function canCastle(from, to) {
+    if ( (turn == 'w' && from == 61) || (turn == 'b' && from == 5) ) {
+        if (to - from == -2) {
+            const rook = document.getElementById(from - 4);
+            if (isEmpty(from - 1) && isEmpty(to) && isEmpty(from - 3) && getPieceType(rook) == 'rook'){
+                return moveRookForCastle(rook, from - 1, from);
+            }
+        }else if (to - from == 2) {
+            const rook = document.getElementById(from + 3);
+            if (isEmpty(from + 1) && isEmpty(to) && getPieceType(rook) == 'rook') {
+                return moveRookForCastle(rook, from + 1, from);
+            }
+        }
+    } 
+    return false;
+}
+
+function moveRookForCastle(rook, to, kingId) {
+    selected = rook;
+    move(document.getElementById(to));
+    selected = document.getElementById(kingId);
+    turn = opponentColor();
+
+    return true;
 }
