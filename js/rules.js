@@ -96,7 +96,22 @@ function canRookMove(from, to){
 }
 
 function canKnightMove(from, to) {
-    return true;
+    let canMove = false;
+    let validMoves = [];
+    validMoves.push(from + 16 - 1);
+    validMoves.push(from + 16 + 1);
+    validMoves.push(from - 16 + 1);
+    validMoves.push(from - 16 - 1);
+    validMoves.push(from + 8 - 2);
+    validMoves.push(from + 8 + 2);
+    validMoves.push(from - 8 - 2);
+    validMoves.push(from - 8 + 2);
+
+    if (validMoves.includes(to) && getColor(document.getElementById(to)) != turn) {
+        canMove = true;
+    }
+
+    return canMove;
 }
 
 function canBishopMove(from, to) {
