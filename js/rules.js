@@ -54,21 +54,15 @@ function canRookMove(from, to){
     //cannot move through pieces
     //don't check the to square here
     let canMove = true;
-    const ensureEmptiness = (elemId) => {
-        if (document.getElementById(elemId).classList[1] != 'empty'){
-            canMove = false;
-        }
-    }
-
     if (canGoVertical) {
         if (to > from){
             for (let i = from+8; i <= to-8; i=i+8){
-                ensureEmptiness(i);
+                canMove = isEmpty(i);
                 if (!canMove) break;
             }
         }else {
             for (let i = from-8; i >= to+8; i=i-8){
-                ensureEmptiness(i);
+                canMove = isEmpty(i);
                 if (!canMove) break;
             }
         }
@@ -76,23 +70,18 @@ function canRookMove(from, to){
     }else if (canGoHorizontal) {
         if (to > from) {
             for (let i = from+1; i <= to-1; i++){
-                ensureEmptiness(i);
+                canMove = isEmpty(i);
                 if (!canMove) break;
             }
         }else {
             for (let i = from-1; i >= to+1; i--){
-                ensureEmptiness(i);
+                canMove = isEmpty(i);
                 if (!canMove) break;
             }
         }
     }
-
-    //if the destination is one of our pieces, we can't move there!
-    if (getColor(document.getElementById(to)) == turn){
-        canMove = false;
-    }
-
-    return ( (canGoHorizontal || canGoVertical) && canMove );
+    
+    return ( (canGoHorizontal || canGoVertical) && canMove && !inYourOwnWay(to));
 }
 
 function canKnightMove(from, to) {
@@ -106,7 +95,7 @@ function canKnightMove(from, to) {
     validMoves.push(from - 8 - 2);
     validMoves.push(from - 8 + 2);
 
-    return (validMoves.includes(to) && getColor(document.getElementById(to)) != turn);
+    return (validMoves.includes(to) && !inYourOwnWay(to));
 }
 
 function canBishopMove(from, to) {
