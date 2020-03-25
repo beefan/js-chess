@@ -135,7 +135,7 @@ function canBishopMove(from, to) {
 }
 
 function canQueenMove(from, to) {
-    return true;
+    return canBishopMove(from, to) || canRookMove(from, to);
 }
 
 function canKingMove(from, to){
