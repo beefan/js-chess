@@ -1,7 +1,16 @@
 function clearBoard() {
     const frame = document.getElementById('frame');
-    const rows = Array.from(frame.children);
-    rows.forEach( x => frame.removeChild(x));
+    const blackbench = document.getElementById('blackbench');
+    const whitebench = document.getElementById('whitebench');
+
+    removeChildren(frame);
+    removeChildren(blackbench);
+    removeChildren(whitebench);
+}
+
+function removeChildren(parent) {
+    const rows = Array.from(parent.children);
+    rows.forEach( x => parent.removeChild(x));
 }
 
 function drawBoard() {

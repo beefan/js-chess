@@ -70,11 +70,26 @@ function move(space) {
     selected.classList.remove('piece-select');
     selected.classList.add('empty');
 
+    if (targetClass != 'empty') {
+        addToBench(space);
+    }
+
     space.classList.remove(targetClass);
     space.classList.add(pieceName);
 
     selected = null;
     turn = opponentColor();
+}
+
+function addToBench(piece) {
+
+    const benchedPiece = document.createElement('div');
+    const pieceClass = piece.classList[1];
+    const bench = (getColor(piece) == 'w' ? 'white' : 'black') + 'bench';
+    benchedPiece.classList.add(pieceClass);
+    benchedPiece.classList.add('bench-square');
+    //alert('anything? ' + pieceClass + ' ' + bench);
+    document.getElementById(bench).insertAdjacentElement('beforeend', benchedPiece);
 }
 
 function listenForMovement() {
