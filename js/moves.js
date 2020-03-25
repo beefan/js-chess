@@ -41,8 +41,8 @@ const pieceListener = (piece) => {
 function pieceCanMove(space) {
     if (selected == null) return false;
     const pieceType = getPieceType(selected);
-    const from = selected.id;
-    const to = space.id;
+    const from = Number(selected.id);
+    const to = Number(space.id);
     switch (pieceType) {
         case 'pawn': 
             return canPawnMove(from, to);

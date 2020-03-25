@@ -5,8 +5,8 @@ function canPawnMove(from, to){
     const diff = turn == 'w' ? (from-to) : (to-from);
 
     //if we are at the start, we can move two places
-    if ( (whitePawnStarts.includes(Number(from)) && turn == 'w') || 
-        (blackPawnStarts.includes(Number(from)) && turn == 'b') ) {
+    if ( (whitePawnStarts.includes(from) && turn == 'w') || 
+        (blackPawnStarts.includes(from) && turn == 'b') ) {
         places++;
     }
 
@@ -17,7 +17,7 @@ function canPawnMove(from, to){
     pathClear = spaceToMove == 'empty';
 
     if (places == 2) {
-        const id = turn == 'w' ? Number(from)-8 : Number(from)+8;
+        const id = turn == 'w' ? from-8 : from+8;
         const spaceToMoveThrough = document.getElementById(id).classList[1];
         pathClear = spaceToMoveThrough == 'empty';
     }
@@ -43,7 +43,56 @@ function canPawnMove(from, to){
 }
 
 function canRookMove(from, to){
-    return true;
+    //can move forward/backwards in multiples of 8
+    const canGoVertical = (from-to) % 8 == 0;
+
+    //can move sideways until it hits an edge
+    const rowStart = selected.parentElement.firstChild.id;
+    const rowEnd = selected.parentElement.lastChild.id;
+    const canGoHorizontal = (to >= rowStart && to <= rowEnd);
+    
+    //cannot move through pieces
+    //don't check the to square here
+    let canMove = true;
+    const ensureEmptiness = (elemId) => {
+        if (document.getElementById(elemId).classList[1] != 'empty'){
+            canMove = false;
+        }
+    }
+
+    if (canGoVertical) {
+        if (to > from){
+            for (let i = from+8; i <= to-8; i=i+8){
+                ensureEmptiness(i);
+                if (!canMove) break;
+            }
+        }else {
+            for (let i = from-8; i >= to+8; i=i-8){
+                ensureEmptiness(i);
+                if (!canMove) break;
+            }
+        }
+
+    }else if (canGoHorizontal) {
+        if (to > from) {
+            for (let i = from+1; i <= to-1; i++){
+                ensureEmptiness(i);
+                if (!canMove) break;
+            }
+        }else {
+            for (let i = from-1; i >= to+1; i--){
+                ensureEmptiness(i);
+                if (!canMove) break;
+            }
+        }
+    }
+
+    //if the destination is one of our pieces, we can't move there!
+    if (getColor(document.getElementById(to)) == turn){
+        canMove = false;
+    }
+
+    return ( (canGoHorizontal || canGoVertical) && canMove );
 }
 
 function canKnightMove(from, to) {
