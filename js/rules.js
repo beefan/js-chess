@@ -96,7 +96,6 @@ function canRookMove(from, to){
 }
 
 function canKnightMove(from, to) {
-    let canMove = false;
     let validMoves = [];
     validMoves.push(from + 16 - 1);
     validMoves.push(from + 16 + 1);
@@ -107,15 +106,51 @@ function canKnightMove(from, to) {
     validMoves.push(from - 8 - 2);
     validMoves.push(from - 8 + 2);
 
-    if (validMoves.includes(to) && getColor(document.getElementById(to)) != turn) {
-        canMove = true;
-    }
-
-    return canMove;
+    return (validMoves.includes(to) && getColor(document.getElementById(to)) != turn);
 }
 
 function canBishopMove(from, to) {
-    return true;
+    let paths = [];
+    let path = [];
+    for (let i  = from+7; i < 65; i=i+7) {
+        path.push(i);
+        if (isEdge(i)) break;
+    }
+    paths.push(path);
+    path = [];
+    for (let i = from+9; i < 65; i=i+9){
+        path.push(i);
+        if (isEdge(i)) break;
+    }
+    paths.push(path);
+    path = [];
+    for (let i = from-7; i > 0; i=i-7){
+        path.push(i);
+        if (isEdge(i)) break;
+    }
+    paths.push(path);
+    path = [];
+    for (let i = from - 9; i > 0; i=i-9) {
+        path.push(i);
+        if (isEdge(i)) break;
+    }
+    paths.push(path);
+
+    let isBlocked = false;
+    let validMove = false;
+    for (path of paths) {
+       if (path.includes(to)) {
+           validMove = true;
+           for (let i=0; i < path.indexOf(to); i++) {
+                if (!isEmpty(path[i])) {
+                    isBlocked = true;
+                }
+           }
+           break;
+       }
+    }
+
+    return validMove && !isBlocked && !inYourOwnWay(to);
 }
 
 function canQueenMove(from, to) {
@@ -126,8 +161,19 @@ function canKingMove(from, to){
     return true;
 }
 
-function isBackwards(from, to) {
-    if (turn == 'w' && to < from) return true;
-    if (turn == 'b' && to > from) return true;
-    return false;
+/*HELPER FUNCTIONS */
+/**
+ * 
+ * @param {*} elemId 
+ */
+function isEmpty(elemId) {
+    return document.getElementById(elemId).classList[1] == 'empty';
+}
+
+function inYourOwnWay(elemId) {
+    return getColor(document.getElementById(elemId)) == turn;
+}
+
+function isEdge(elemId) {
+    return (elemId > 64 || elemId < 1 || elemId % 8 == 0 || (elemId-1) % 8 == 0);
 }
