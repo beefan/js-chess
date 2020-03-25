@@ -54,7 +54,7 @@ function getPieceClass(count) {
             return 'bishop_b';
         case count == 4: return 'queen_b';
         case count == 5: return 'king_b';
-        case count > 7 && count < 17: return 'pawn_b';
+        case count > 8 && count < 17: return 'pawn_b';
 
         case count == 57 || count == 64: 
             return 'rook_w';

@@ -4,7 +4,11 @@ let turn;
 function registerMoveListeners() {
     selected = null;
     turn = 'w';
-    setListeners();
+
+    const squares = getAllSpaces();
+    squares.forEach( x => {
+        x.addEventListener('click', (event) => spaceListener(x));
+    });
 }
 
 const spaceListener = (space) => {
@@ -31,35 +35,30 @@ const pieceListener = (piece) => {
         piece.classList.add('piece-select');
         listenForMovement();
         return;
-    } else {
-        spaceListener(piece);
-        return;
-    }
-}
-
-function setListeners() {
-    const squares = getAllSpaces();
-    squares.forEach( x => {
-        const piece = x.classList[1];
-        let listener;
-        if (piece != 'empty'){
-            listener = pieceListener;
-        } else {
-            listener = spaceListener;
-        }
-
-        x.addEventListener('click', (event) => listener(x));
-    });
+    } 
 }
 
 function pieceCanMove(space) {
     if (selected == null) return false;
-    pieceType = getPieceType(selected);
-    currentSpace = selected.id;
-    spaceToMove = space.id;
-
-    //implement piece moving logic here
-    return true;
+    const pieceType = getPieceType(selected);
+    const from = selected.id;
+    const to = space.id;
+    switch (pieceType) {
+        case 'pawn': 
+            return canPawnMove(from, to);
+        case 'rook':
+            return canRookMove(from, to);
+        case 'knight':
+            return canKnightMove(from, to);
+        case 'bishop':
+            return canBishopMove(from, to);
+        case 'queen':
+            return canQueenMove(from, to);
+        case 'king':
+            return canKingMove(from, to);
+        default:
+            return false;
+    }
 }
 
 function move(space) {
@@ -86,9 +85,10 @@ function addToBench(piece) {
     const benchedPiece = document.createElement('div');
     const pieceClass = piece.classList[1];
     const bench = (getColor(piece) == 'w' ? 'white' : 'black') + 'bench';
+
     benchedPiece.classList.add(pieceClass);
     benchedPiece.classList.add('bench-square');
-    //alert('anything? ' + pieceClass + ' ' + bench);
+    
     document.getElementById(bench).insertAdjacentElement('beforeend', benchedPiece);
 }
 
@@ -111,8 +111,8 @@ function stopListeningForMovement() {
 }
 
 function getPieceType(piece) {
-    pieceType = piece.classList[1];
-    pieceType = pieceType.substring(0, pieceType.length-2);
+    let pieceType = piece.classList[1];
+    return pieceType.substring(0, pieceType.length-2);
 }
 
 function getColor(piece) {
