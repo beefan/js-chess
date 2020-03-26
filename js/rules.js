@@ -279,6 +279,13 @@ function moveRookForCastle(rook, to, kingId) {
     return true;
 }
 
+/**
+ * Checks to see if the attempted move will put 
+ * the user in Check. Alerts the user if so. 
+ * 
+ * @param {Number} to Id of square the user wants to move to
+ * @returns {Boolean} true if the move will put in check, false otherwise. 
+ */
 function willPutYouInCheck(to) {
     let inCheck = false;
     const allSquares = getAllSpaces();
