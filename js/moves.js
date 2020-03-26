@@ -29,8 +29,8 @@ const spaceListener = (space) => {
     if (pieceCanMove(space)) {
         if (!willPutYouInCheck(space.id)){
             move(space);
+            alertIfOpponentInCheck();
         }
-        console.log('SHOUT ' + getPieceType(space));
     }
 }
 

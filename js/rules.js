@@ -306,13 +306,31 @@ function willPutYouInCheck(to) {
         }
     }
 
-    selected = allSquares.filter( x => x.id == to)[0];
+    selected = yourMoveSelection;
     move(yourPieceSelection);
     selected = yourPieceSelection;
     
     return inCheck;
 }
 
-function willPutOpponentInCheck(from, to) {
+/**
+ * Alerts the users of the game if the move made
+ * puts the opponent in check. 
+ * 
+ */
+function alertIfOpponentInCheck() {
+    const allSquares = getAllSpaces();
+    const yourPieces = allSquares.filter( x => getColor(x) == opponentColor());
+    const opponentKing = allSquares.filter(x => getColor(x) == turn && getPieceType(x) == 'king')[0];
 
+    turn = opponentColor();
+    for (piece of yourPieces) {
+        selected = piece;
+        if (pieceCanMove(opponentKing)) {
+            alert('Check!');
+            break;
+        }
+    }
+    selected = null;
+    turn = opponentColor();
 }
