@@ -34,7 +34,7 @@ function canPawnMove(from, to){
         inForKill = !isEmpty(to) && !inYourOwnWay(to); 
     }
 
-    return (inForKill || (pathClear && moveValid));
+    return (inForKill || (pathClear && moveValid)); 
 }
 
 /**
@@ -80,6 +80,12 @@ function canRookMove(from, to){
     }
 
     return ( (canGoHorizontal || canGoVertical) && canMove && !inYourOwnWay(to));
+
+    // if ( (canGoHorizontal || canGoVertical) && canMove && !inYourOwnWay(to)) {
+    //     return !willPutYouInCheck(to);
+    // }else { 
+    //     return false;
+    // }
 }
 
 /**
@@ -101,6 +107,11 @@ function canKnightMove(from, to) {
     validMoves.push(from - 8 + 2);
 
     return (validMoves.includes(to) && !inYourOwnWay(to));
+    // if (validMoves.includes(to) && !inYourOwnWay(to)) {
+    //     return !willPutYouInCheck(to);
+    // }else { 
+    //     return false;
+    // }
 }
 
 /**
@@ -152,6 +163,11 @@ function canBishopMove(from, to) {
     }
 
     return validMove && !isBlocked && !inYourOwnWay(to);
+    // if (validMove && !isBlocked && !inYourOwnWay(to)) {
+    //     return !willPutYouInCheck(to);
+    // }else { 
+    //     return false;
+    // }
 }
 
 /**
@@ -182,6 +198,11 @@ function canKingMove(from, to){
     }
     
     return (validMoves.includes(to) || canCastle(from, to)) && !inYourOwnWay(to);
+    // if ((validMoves.includes(to) || canCastle(from, to)) && !inYourOwnWay(to)) {
+    //     return !willPutYouInCheck(to);
+    // }else { 
+    //     return false;
+    // }
 }
 
 /*HELPER FUNCTIONS */
@@ -256,4 +277,35 @@ function moveRookForCastle(rook, to, kingId) {
     turn = opponentColor();
 
     return true;
+}
+
+function willPutYouInCheck(to) {
+    let inCheck = false;
+    const allSquares = getAllSpaces();
+    const opponentPieces = allSquares.filter( x => getColor(x) == opponentColor());
+    const yourMoveSelection = allSquares.filter( x => x.id == to)[0];
+    const yourPieceSelection = selected; 
+    let yourKing = allSquares.filter(x => getColor(x) == turn && getPieceType(x) == 'king')[0];
+    if (yourKing.id == yourPieceSelection.id) yourKing = yourMoveSelection;
+
+    move(yourMoveSelection);
+
+    for (piece of opponentPieces) {
+        selected = piece;
+        if (pieceCanMove(yourKing)){
+            alert("You can't move there! It'll put you in check!");
+            inCheck = true;
+            break;
+        }
+    }
+
+    selected = allSquares.filter( x => x.id == to)[0];
+    move(yourPieceSelection);
+    selected = yourPieceSelection;
+    
+    return inCheck;
+}
+
+function willPutOpponentInCheck(from, to) {
+
 }

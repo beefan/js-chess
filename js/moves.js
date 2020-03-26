@@ -27,8 +27,10 @@ const spaceListener = (space) => {
     }
 
     if (pieceCanMove(space)) {
-        stopListeningForMovement();
-        move(space);
+        if (!willPutYouInCheck(space.id)){
+            move(space);
+        }
+        console.log('SHOUT ' + getPieceType(space));
     }
 }
 
@@ -88,6 +90,7 @@ function pieceCanMove(space) {
  * @param {HTMLElement} space element to which the selected space is to be moved
  */
 function move(space) {
+    stopListeningForMovement();
     pieceName = selected.classList[1];
     targetClass = space.classList[1];
 
