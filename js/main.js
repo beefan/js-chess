@@ -1,10 +1,15 @@
-
+/**
+ * Resets the Board and starts a new game.
+ */
 function resetGame() {
     document.querySelector('.announce').innerText = 'A Chess Game';
     clearBoard();
     startGame();
 }
 
+/**
+ * Draws the board. Registers move listeners. 
+ */
 function startGame() {
     drawBoard();
     registerMoveListeners();

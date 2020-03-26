@@ -1,6 +1,10 @@
 let selected;
 let turn;
 
+/**
+ * Registers Move Listeners to monitor user movement.
+ * 
+ */
 function registerMoveListeners() {
     selected = null;
     turn = 'w';
@@ -11,6 +15,11 @@ function registerMoveListeners() {
     });
 }
 
+/**
+ * Listener to handle user clicks on chess board squares.
+ * 
+ * @param {HTMLElement} space element in which to register the listener 
+ */
 const spaceListener = (space) => {
     if (getColor(space) == turn){
         pieceListener(space);
@@ -23,6 +32,12 @@ const spaceListener = (space) => {
     }
 }
 
+/**
+ * Called by the spaceListener when a chess piece is found at 
+ * the space. Handles piece selection. 
+ * 
+ * @param {HTMLElement} piece chess piece to select
+ */
 const pieceListener = (piece) => {
     if (selected != null){
          selected.classList.remove('piece-select');
@@ -38,6 +53,12 @@ const pieceListener = (piece) => {
     } 
 }
 
+/**
+ * Checks if selected piece can move to a specific space based on chess rules.
+ * 
+ * @param {HTMLElement} space element the selected piece wants to move to
+ * @return {Boolean} boolean indicating whether or not selected piece can move
+ */
 function pieceCanMove(space) {
     if (selected == null) return false;
     const pieceType = getPieceType(selected);
@@ -61,6 +82,11 @@ function pieceCanMove(space) {
     }
 }
 
+/**
+ * Moves the selected element to a specifc space.
+ * 
+ * @param {HTMLElement} space element to which the selected space is to be moved
+ */
 function move(space) {
     pieceName = selected.classList[1];
     targetClass = space.classList[1];
@@ -80,6 +106,12 @@ function move(space) {
     turn = opponentColor();
 }
 
+/**
+ * Removes chess piece class from a square and adds it to the bench. Called
+ * when a piece is taken by an opponent. 
+ * 
+ * @param {HTMLElement} piece board square to clear and add piece to bench
+ */
 function addToBench(piece) {
 
     const benchedPiece = document.createElement('div');
@@ -92,6 +124,11 @@ function addToBench(piece) {
     document.getElementById(bench).insertAdjacentElement('beforeend', benchedPiece);
 }
 
+/**
+ * Adds :hover class to all available squares to indicate to the user 
+ * that they might be able to move there. 
+ * 
+ */
 function listenForMovement() {
     const spaces = getAllSpaces();
     spaces.forEach(x => {
@@ -101,6 +138,11 @@ function listenForMovement() {
     });
 }
 
+/**
+ * Removes :hover class to available spaces to indicate to the user they
+ * should select a piece first. 
+ * 
+ */
 function stopListeningForMovement() {
     const spaces = getAllSpaces();
     spaces.forEach(x => {
@@ -110,22 +152,42 @@ function stopListeningForMovement() {
     });
 }
 
+/**
+ * Returns the name of a chess piece at a specific square.
+ * 
+ * @param {HTMLElement} piece square to determine what piece is there
+ * @return {String} name of piece existing at the square
+ */
 function getPieceType(piece) {
     let pieceType = piece.classList[1];
     return pieceType.substring(0, pieceType.length-2);
 }
 
+/**
+ * Returns the color of a piece at a specific square. 
+ * 
+ * @param {HTMLElement} piece square to get the color of the piece from
+ * @return {String} w or b - color of piece at the square 
+ */
 function getColor(piece) {
     const pieceType = piece.classList[1];
     const color = pieceType.substring(pieceType.length-1);
     return color;
 }
 
+/**
+ * Gets the color of the player who's turn is not now. 
+ */
 function opponentColor() {
     if (turn === 'w') return 'b';
     if (turn === 'b') return 'w';
 }
 
+/**
+ * Gets all spaces on the board.
+ * 
+ * @returns {HTMLElement[]} array of all pieces on the chess board.
+ */
 function getAllSpaces() {
     return Array.from(document.getElementById('frame')
                                         .querySelectorAll('.row > div'));
