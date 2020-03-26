@@ -80,12 +80,6 @@ function canRookMove(from, to){
     }
 
     return ( (canGoHorizontal || canGoVertical) && canMove && !inYourOwnWay(to));
-
-    // if ( (canGoHorizontal || canGoVertical) && canMove && !inYourOwnWay(to)) {
-    //     return !willPutYouInCheck(to);
-    // }else { 
-    //     return false;
-    // }
 }
 
 /**
@@ -107,11 +101,6 @@ function canKnightMove(from, to) {
     validMoves.push(from - 8 + 2);
 
     return (validMoves.includes(to) && !inYourOwnWay(to));
-    // if (validMoves.includes(to) && !inYourOwnWay(to)) {
-    //     return !willPutYouInCheck(to);
-    // }else { 
-    //     return false;
-    // }
 }
 
 /**
@@ -163,11 +152,6 @@ function canBishopMove(from, to) {
     }
 
     return validMove && !isBlocked && !inYourOwnWay(to);
-    // if (validMove && !isBlocked && !inYourOwnWay(to)) {
-    //     return !willPutYouInCheck(to);
-    // }else { 
-    //     return false;
-    // }
 }
 
 /**
@@ -198,11 +182,6 @@ function canKingMove(from, to){
     }
     
     return (validMoves.includes(to) || canCastle(from, to)) && !inYourOwnWay(to);
-    // if ((validMoves.includes(to) || canCastle(from, to)) && !inYourOwnWay(to)) {
-    //     return !willPutYouInCheck(to);
-    // }else { 
-    //     return false;
-    // }
 }
 
 /*HELPER FUNCTIONS */
