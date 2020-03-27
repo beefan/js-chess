@@ -1,5 +1,7 @@
 let selected;
 let turn;
+let check = false;
+let checkmate = false;
 
 /**
  * Registers Move Listeners to monitor user movement.
@@ -27,10 +29,8 @@ const spaceListener = (space) => {
     }
 
     if (pieceCanMove(space)) {
-        if (!willPutYouInCheck(space.id)){
-            move(space);
-            alertIfOpponentInCheck();
-        }
+        stopListeningForMovement();
+        move(space);
     }
 }
 
@@ -85,28 +85,42 @@ function pieceCanMove(space) {
 }
 
 /**
- * Moves the selected element to a specifc space.
+ * Moves the selected element to a specifc space. If Boolean
+ * is specified, don't actually move.
  * 
  * @param {HTMLElement} space element to which the selected space is to be moved
+ * @param {Boolean} test optional, true if we want to run as a test
+ * @returns {Boolean} indicates whether or not the move puts user in check
  */
-function move(space) {
-    stopListeningForMovement();
-    pieceName = selected.classList[1];
-    targetClass = space.classList[1];
+function move(space, test = false) {
+    const pieceClass = selected.classList[1];
+    const spaceClass = space.classList[1];
+    const spaceClone = space.cloneNode(true);
+    const pieceCopy = selected;
 
-    selected.classList.remove(pieceName);
+    selected.classList.remove(pieceClass);
     selected.classList.remove('piece-select');
     selected.classList.add('empty');
+    space.classList.remove(spaceClass);
+    space.classList.add(pieceClass);
 
-    if (targetClass != 'empty') {
-        addToBench(space);
+    const check = willPutYouInCheck(space);
+    if (check || test){
+        selected = pieceCopy;
+        selected.classList.remove('empty');
+        selected.classList.add(pieceClass);
+        space.classList.remove(pieceClass);
+        space.classList.add(spaceClass);
+        return check;
+    }else {
+        if (spaceClass != 'empty') {
+            addToBench(spaceClone);
+        }
+        selected = null;
+        turn = opponentColor();
+        alertIfOpponentInCheck();
+        return false;
     }
-
-    space.classList.remove(targetClass);
-    space.classList.add(pieceName);
-
-    selected = null;
-    turn = opponentColor();
 }
 
 /**

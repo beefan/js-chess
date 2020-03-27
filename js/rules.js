@@ -265,17 +265,14 @@ function moveRookForCastle(rook, to, kingId) {
  * @param {Number} to Id of square the user wants to move to
  * @returns {Boolean} true if the move will put in check, false otherwise. 
  */
-function willPutYouInCheck(to) {
+function willPutYouInCheck(space) {
     let inCheck = false;
     const allSquares = getAllSpaces();
     const opponentPieces = allSquares.filter( x => getColor(x) == opponentColor());
-    const yourMoveSelection = allSquares.filter( x => x.id == to)[0];
-    const yourPieceSelection = selected; 
     let yourKing = allSquares.filter(x => getColor(x) == turn && getPieceType(x) == 'king')[0];
-    if (yourKing.id == yourPieceSelection.id) yourKing = yourMoveSelection;
+    if (yourKing.id == selected.id) yourKing = space;
 
-    move(yourMoveSelection);
-
+    turn = opponentColor();
     for (piece of opponentPieces) {
         selected = piece;
         if (pieceCanMove(yourKing)){
@@ -284,10 +281,7 @@ function willPutYouInCheck(to) {
             break;
         }
     }
-
-    selected = yourMoveSelection;
-    move(yourPieceSelection);
-    selected = yourPieceSelection;
+    turn = opponentColor();
     
     return inCheck;
 }
@@ -298,18 +292,47 @@ function willPutYouInCheck(to) {
  * 
  */
 function alertIfOpponentInCheck() {
-    const allSquares = getAllSpaces();
-    const yourPieces = allSquares.filter( x => getColor(x) == opponentColor());
-    const opponentKing = allSquares.filter(x => getColor(x) == turn && getPieceType(x) == 'king')[0];
-
     turn = opponentColor();
+    const allSquares = getAllSpaces();
+    const yourPieces = allSquares.filter( x => getColor(x) == turn);
+    const opponentKing = allSquares.filter(x => getColor(x) == opponentColor() && getPieceType(x) == 'king')[0];
+
     for (piece of yourPieces) {
         selected = piece;
         if (pieceCanMove(opponentKing)) {
-            alert('Check!');
+            if (isCheckMate()) {
+                const winner = turn == 'w' ? 'white' : 'black';
+                alert(`Checkmate! The winner is ${winner}. \nHit Reset Game to play again.`);
+            }else{
+                alert('Check!');
+            }
             break;
         }
     }
     selected = null;
     turn = opponentColor();
+}
+
+/**
+ * Checks if a there is a checkmate. 
+ * 
+ * @returns true if checkmate, false otherwise
+ */
+function isCheckMate() {
+    const spaces = getAllSpaces();
+    const pieces = spaces.filter( x => getColor(x) == opponentColor());
+    const potentialMoves = spaces.filter( x => getColor(x) != opponentColor());
+
+    pieces.forEach( piece => {
+        selected = piece;
+        potentialMoves.forEach( moove => {
+            if (pieceCanMove(moove)) {
+                if (!move(moove, true)) {
+                    return false;
+                }
+            }
+        });
+    });
+
+    return true;
 }
