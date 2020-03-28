@@ -19,7 +19,7 @@ function canPawnMove(from, to){
     let pathClear = isEmpty(to);
     if (places == 2) {
         const id = turn == 'w' ? from-8 : from+8;
-        pathClear = isEmpty(id);
+        pathClear = isEmpty(id) && pathClear;
     }
 
     let moveValid = false;
@@ -46,9 +46,9 @@ function canPawnMove(from, to){
  */
 function canRookMove(from, to){
     const canGoVertical = (from-to) % 8 == 0;
-
-    const rowStart = selected.parentElement.firstChild.id;
-    const rowEnd = selected.parentElement.lastChild.id;
+    const piece = document.getElementById(from);
+    const rowStart = piece.parentElement.firstChild.id;
+    const rowEnd = piece.parentElement.lastChild.id;
     const canGoHorizontal = (to >= rowStart && to <= rowEnd);
 
     let canMove = true;
@@ -217,23 +217,28 @@ function isEdge(elemId) {
 }
 
 /**
- * Determines if a castling can and should take place.
+ * Determines if a castling can and should take place. Handles
+ * the work if possible. 
  * 
- * @param {Number} from ID of space to move from
- * @param {Number} to ID of space to move to
- * @return {Boolean} true if castling can take place, otherwise false
+ * @param {Number} from ID of space to move king from
+ * @param {Number} to ID of space to move king to
+ * @return {Boolean} always returns false bc if castling is possible, 
+ *                   the moveRookForCastle function will handle it.
  */
 function canCastle(from, to) {
+    if (Math.abs(from-to) != 2){
+        return false;
+    }
     if ( (turn == 'w' && from == 61) || (turn == 'b' && from == 5) ) {
         if (to - from == -2) {
             const rook = document.getElementById(from - 4);
             if (isEmpty(from - 1) && isEmpty(to) && isEmpty(from - 3) && getPieceType(rook) == 'rook'){
-                return moveRookForCastle(rook, from - 1, from);
+                moveRookForCastle(rook, from - 1, from, to);
             }
         }else if (to - from == 2) {
             const rook = document.getElementById(from + 3);
             if (isEmpty(from + 1) && isEmpty(to) && getPieceType(rook) == 'rook') {
-                return moveRookForCastle(rook, from + 1, from);
+                moveRookForCastle(rook, from + 1, from, to);
             }
         }
     } 
@@ -241,98 +246,122 @@ function canCastle(from, to) {
 }
 
 /**
- * Moves a Rook for a castling. Then reselects the King 
- * to prepare it for movement. 
+ * Performs castling if possible. Ensures user is not in check
+ * and will not be putting themselves in check by castling. 
  * 
  * @param {HTMLElement} rook element with a rook
- * @param {Number} to ID of square to move it to
+ * @param {Number} rookTo ID of square to move rook to
  * @param {Number} kingId ID of square with king
- * @returns {Boolean} true
+ * @param {Number} kingTo ID of square to move king to
  */
-function moveRookForCastle(rook, to, kingId) {
-    selected = rook;
-    move(document.getElementById(to));
-    selected = document.getElementById(kingId);
-    turn = opponentColor();
+function moveRookForCastle(rook, rookTo, kingId, kingTo) {
+    if (isInCheck) {
+        alert("You can't castle out of check");
+        return;
+    }
+    const rSpace = document.getElementById(rookTo);
+    const kSpace = document.getElementById(kingTo);
+    const king = document.getElementById(kingId);
+    const rookMovers = stageMove(rSpace, rook);
+    const kingMovers = stageMove(kSpace, king);
+  
+    if (!inCheck().areYou) {
+        commitMove(rookMovers);
+        commitMove(kingMovers);
+        turn = opponentColor();
 
-    return true;
+    }else {
+        alert("Castling now will put you in check.");
+        rollbackMove(rookMovers);
+        rollbackMove(kingMovers);
+        isInCheck = false;
+    }
 }
 
 /**
- * Checks to see if the attempted move will put 
- * the user in Check. Alerts the user if so. 
+ * Checks to see if the staged move will put the user in Check. 
  * 
- * @param {Number} to Id of square the user wants to move to
- * @returns {Boolean} true if the move will put in check, false otherwise. 
+ * @returns {Object} object with two properties, boolean indicating
+ *                   if in check. Message to alert user if so.
  */
-function willPutYouInCheck(space) {
+function inCheck() {
     let inCheck = false;
+    let msg = "";
     const allSquares = getAllSpaces();
     const opponentPieces = allSquares.filter( x => getColor(x) == opponentColor());
     let yourKing = allSquares.filter(x => getColor(x) == turn && getPieceType(x) == 'king')[0];
-    if (yourKing.id == selected.id) yourKing = space;
 
     turn = opponentColor();
-    for (piece of opponentPieces) {
-        selected = piece;
-        if (pieceCanMove(yourKing)){
-            alert("You can't move there! It'll put you in check!");
+    for (p of opponentPieces) {
+        if (pieceCanMove(yourKing, p)){
+            if (checkmate) {
+                msg = "Game's over, pal. Hit reset to play again.";
+            }else if (isInCheck) {
+                msg = "You can't move there. \nYou're in check!";
+            }else {
+                msg = "You can't move there! It'll put you in check!";
+            }
             inCheck = true;
+            isInCheck = true;
             break;
         }
     }
     turn = opponentColor();
     
-    return inCheck;
+    return {"areYou":inCheck, "message":msg};
 }
 
 /**
- * Alerts the users of the game if the move made
- * puts the opponent in check. 
+ * Alerts the users of the game if the move made puts the 
+ * opponent in check. Alerts also, if opponent is in checkmate. 
  * 
  */
 function alertIfOpponentInCheck() {
-    turn = opponentColor();
     const allSquares = getAllSpaces();
     const yourPieces = allSquares.filter( x => getColor(x) == turn);
     const opponentKing = allSquares.filter(x => getColor(x) == opponentColor() && getPieceType(x) == 'king')[0];
 
     for (piece of yourPieces) {
-        selected = piece;
-        if (pieceCanMove(opponentKing)) {
+        if (pieceCanMove(opponentKing, piece)) {
             if (isCheckMate()) {
                 const winner = turn == 'w' ? 'white' : 'black';
                 alert(`Checkmate! The winner is ${winner}. \nHit Reset Game to play again.`);
+                checkmate = true;
             }else{
                 alert('Check!');
+                isInCheck = true;
             }
-            break;
         }
     }
-    selected = null;
-    turn = opponentColor();
 }
 
 /**
  * Checks if a there is a checkmate. 
  * 
- * @returns true if checkmate, false otherwise
+ * @returns {Boolean} true if checkmate, false otherwise
  */
 function isCheckMate() {
+    isInCheck = false;
     const spaces = getAllSpaces();
     const pieces = spaces.filter( x => getColor(x) == opponentColor());
     const potentialMoves = spaces.filter( x => getColor(x) != opponentColor());
+    let outcomes = [];
 
-    pieces.forEach( piece => {
-        selected = piece;
-        potentialMoves.forEach( moove => {
-            if (pieceCanMove(moove)) {
-                if (!move(moove, true)) {
-                    return false;
-                }
+    turn = opponentColor();
+    for (moove of potentialMoves) {
+        for (piece of pieces) {
+            if (getPieceType(piece) == 'king' && Math.abs(piece.id - moove.id) == 2) {
+                continue;
             }
-        });
-    });
-
-    return true;
+            if (pieceCanMove(moove, piece)) {
+                const movers = stageMove(moove, piece);
+                outcomes.push(inCheck().areYou);
+                rollbackMove(movers);
+            }
+        }
+    }
+    turn = opponentColor();
+    outcomes = outcomes.filter( x => !x);
+    isInCheck = true;
+    return  outcomes.length == 0;
 }
